@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "pulumi_rust",
+  "project_id": "84a4e275-de02-46b3-b6d9-337b6855c0c8"
+}
