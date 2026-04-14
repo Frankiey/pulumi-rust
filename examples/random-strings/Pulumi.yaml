@@ -1,0 +1,6 @@
+name: random-strings
+description: Two RandomStrings with Output dependency — Rust SDK benchmark
+runtime:
+  name: rust
+  options:
+    binary: ../../target/debug/random-strings
