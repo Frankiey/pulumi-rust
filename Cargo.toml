@@ -3,7 +3,11 @@ resolver = "2"
 members = [
     "crates/pulumi-proto",
     "crates/pulumi-sdk",
+    "crates/pulumi-codegen",
+    "crates/pulumi-codegen-cli",
     "crates/pulumi-random",
+    "crates/pulumi-random-generated",
+"crates/pulumi-azure-native-generated",
     "crates/pulumi-language-rust",
     "examples/random-strings",
 ]

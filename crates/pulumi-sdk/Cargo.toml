@@ -6,7 +6,6 @@ license.workspace = true
 
 [dependencies]
 pulumi-proto = { path = "../pulumi-proto" }
-anyhow = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }

@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
-use anyhow::Result;
-use pulumi_sdk::{Context, Output};
+use pulumi_sdk::{Context, Input, Output, ResourceOptions, Result};
 
 const RANDOM_STRING_TYPE: &str = "random:index/randomString:RandomString";
 
@@ -19,24 +18,6 @@ pub struct RandomStringArgs {
     pub numeric: Option<bool>,
 }
 
-/// An input that can be either a plain value or an Output.
-pub enum Input<T: Clone + Send + Sync + 'static> {
-    Value(T),
-    Output(Output<T>),
-}
-
-impl<T: Clone + Send + Sync + 'static> From<T> for Input<T> {
-    fn from(value: T) -> Self {
-        Input::Value(value)
-    }
-}
-
-impl<T: Clone + Send + Sync + 'static> From<Output<T>> for Input<T> {
-    fn from(output: Output<T>) -> Self {
-        Input::Output(output)
-    }
-}
-
 /// A RandomString resource from the pulumi-random provider.
 pub struct RandomString {
     pub urn: String,
@@ -48,7 +29,6 @@ impl RandomString {
     /// Create a new RandomString resource.
     pub async fn new(ctx: &Context, name: &str, args: RandomStringArgs) -> Result<Self> {
         let mut inputs = HashMap::new();
-        let mut deps = Vec::new();
         let mut prop_deps: HashMap<String, Vec<String>> = HashMap::new();
 
         // Handle length input
@@ -58,7 +38,6 @@ impl RandomString {
             }
             Input::Output(ref output) => {
                 // Collect deps from the output
-                deps.extend(output.deps().iter().cloned());
                 prop_deps.insert("length".to_string(), output.deps().to_vec());
 
                 // Wait for the value
@@ -88,7 +67,7 @@ impl RandomString {
         }
 
         let registered = ctx
-            .register_resource(RANDOM_STRING_TYPE, name, inputs, deps, prop_deps, "")
+            .register_resource(RANDOM_STRING_TYPE, name, inputs, prop_deps, &ResourceOptions::default())
             .await?;
 
         let result = registered

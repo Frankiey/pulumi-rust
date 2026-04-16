@@ -1,0 +1,3 @@
+pub mod routing_rule_collection_local_route_setting;
+pub mod routing_rule_destination_type;
+pub mod routing_rule_next_hop_type;

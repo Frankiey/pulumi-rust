@@ -6,5 +6,4 @@ license.workspace = true
 
 [dependencies]
 pulumi-sdk = { path = "../pulumi-sdk" }
-anyhow = { workspace = true }
 serde_json = { workspace = true }

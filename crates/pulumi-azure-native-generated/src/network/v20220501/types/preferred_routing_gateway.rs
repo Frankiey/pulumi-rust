@@ -1,0 +1,42 @@
+/// The preferred gateway to route on-prem traffic
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum PreferredRoutingGateway {
+    ExpressRoute,
+    VpnGateway,
+    None,
+}
+
+impl PreferredRoutingGateway {
+    /// The wire value sent to the Pulumi engine.
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::ExpressRoute => "ExpressRoute",
+            Self::VpnGateway => "VpnGateway",
+            Self::None => "None",
+        }
+    }
+}
+
+impl From<PreferredRoutingGateway> for serde_json::Value {
+    fn from(v: PreferredRoutingGateway) -> Self {
+        serde_json::Value::String(v.as_str().to_string())
+    }
+}
+
+impl serde::Serialize for PreferredRoutingGateway {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> {
+        serializer.serialize_str(self.as_str())
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for PreferredRoutingGateway {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
+        let s = String::deserialize(deserializer)?;
+        match s.as_str() {
+            "ExpressRoute" => Ok(Self::ExpressRoute),
+            "VpnGateway" => Ok(Self::VpnGateway),
+            "None" => Ok(Self::None),
+            _ => Err(serde::de::Error::unknown_variant(&s, &["ExpressRoute", "VpnGateway", "None"])),
+        }
+    }
+}
