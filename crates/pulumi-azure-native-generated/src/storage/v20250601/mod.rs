@@ -1,0 +1,15 @@
+pub mod blob_container;
+pub mod blob_container_immutability_policy;
+pub mod blob_inventory_policy;
+pub mod encryption_scope;
+pub mod file_share;
+pub mod local_user;
+pub mod management_policy;
+pub mod object_replication_policy;
+pub mod private_endpoint_connection;
+pub mod queue;
+pub mod storage_account;
+pub mod storage_task_assignment;
+pub mod table;
+pub mod functions;
+pub mod types;

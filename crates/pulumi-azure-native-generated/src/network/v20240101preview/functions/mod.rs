@@ -1,0 +1,13 @@
+pub mod get_admin_rule;
+pub mod get_admin_rule_collection;
+pub mod get_default_admin_rule;
+pub mod get_ipam_pool;
+pub mod get_ipam_pool_usage;
+pub mod get_network_manager;
+pub mod get_reachability_analysis_intent;
+pub mod get_reachability_analysis_run;
+pub mod get_security_admin_configuration;
+pub mod get_static_cidr;
+pub mod get_verifier_workspace;
+pub mod list_ipam_pool_associated_resources;
+pub mod list_network_manager_deployment_status;

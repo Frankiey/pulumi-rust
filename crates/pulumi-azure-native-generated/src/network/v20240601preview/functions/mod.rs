@@ -1,0 +1,6 @@
+pub mod get_network_security_perimeter;
+pub mod get_network_security_perimeter_access_rule;
+pub mod get_network_security_perimeter_association;
+pub mod get_network_security_perimeter_link;
+pub mod get_network_security_perimeter_logging_configuration;
+pub mod get_network_security_perimeter_profile;
