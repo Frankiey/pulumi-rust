@@ -1,9 +1,0 @@
-pub mod address_prefix_type;
-pub mod address_space_aggregation_option;
-pub mod admin_rule_kind;
-pub mod configuration_type;
-pub mod network_intent_policy_based_service;
-pub mod network_protocol;
-pub mod security_configuration_rule_access;
-pub mod security_configuration_rule_direction;
-pub mod security_configuration_rule_protocol;

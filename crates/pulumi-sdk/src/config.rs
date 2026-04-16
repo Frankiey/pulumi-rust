@@ -27,7 +27,9 @@ impl Config {
 
         // Parse PULUMI_CONFIG JSON blob
         if let Ok(config_json) = std::env::var("PULUMI_CONFIG") {
-            if let Ok(map) = serde_json::from_str::<HashMap<String, serde_json::Value>>(&config_json) {
+            if let Ok(map) =
+                serde_json::from_str::<HashMap<String, serde_json::Value>>(&config_json)
+            {
                 for (key, val) in map {
                     let str_val = match val {
                         serde_json::Value::String(s) => s,

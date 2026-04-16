@@ -1,6 +1,0 @@
-pub mod get_deployment_stack_at_management_group;
-pub mod get_deployment_stack_at_resource_group;
-pub mod get_deployment_stack_at_subscription;
-pub mod get_deployment_stacks_what_if_results_at_management_group;
-pub mod get_deployment_stacks_what_if_results_at_resource_group;
-pub mod get_deployment_stacks_what_if_results_at_subscription;

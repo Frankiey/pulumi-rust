@@ -1,3 +1,4 @@
+pub mod asset;
 pub mod config;
 pub mod context;
 pub mod error;
@@ -13,6 +14,7 @@ pub mod serialize;
 pub mod stack_reference;
 
 // Re-export the main public API
+pub use asset::{Archive, Asset, AssetOrArchive};
 pub use config::Config;
 pub use context::{run, run_async, ComponentContext, Context, FeatureSupport, RegisteredResource};
 pub use error::{PulumiError, Result};

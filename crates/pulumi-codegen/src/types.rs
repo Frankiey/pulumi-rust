@@ -53,7 +53,7 @@ impl RustType {
                 if named.module_path.is_empty() {
                     named.name.clone()
                 } else {
-                    format!("{}::{}", named.module_path.join("::"), named.name)
+                    format!("crate::{}::{}", named.module_path.join("::"), named.name)
                 }
             }
             RustType::Json => "serde_json::Value".to_string(),
@@ -171,10 +171,7 @@ fn resolve_ref_type(ref_str: &str, position: TypePosition, naming: &NamingContex
     let module_path = naming.token_to_module_path(token);
     let base_name = naming.token_to_type_name(token);
 
-    let name = match position {
-        TypePosition::Input => format!("{base_name}Args"),
-        TypePosition::Output | TypePosition::Plain => base_name,
-    };
+    let name = base_name;
 
     RustType::Named(NamedType { module_path, name })
 }
@@ -297,10 +294,7 @@ mod tests {
             ..default_prop()
         };
         let ty = property_to_rust_type(&prop, TypePosition::Input, &naming(), true);
-        assert_eq!(
-            ty.to_type_string(),
-            "HashMap<String, Input<String>>"
-        );
+        assert_eq!(ty.to_type_string(), "HashMap<String, Input<String>>");
     }
 
     #[test]
@@ -310,7 +304,7 @@ mod tests {
             ..default_prop()
         };
         let ty = property_to_rust_type(&prop, TypePosition::Input, &naming(), true);
-        assert_eq!(ty.to_type_string(), "Input<network::SubnetTypeArgs>");
+        assert_eq!(ty.to_type_string(), "Input<crate::network::SubnetType>");
     }
 
     #[test]
@@ -320,7 +314,7 @@ mod tests {
             ..default_prop()
         };
         let ty = property_to_rust_type(&prop, TypePosition::Output, &naming(), true);
-        assert_eq!(ty.to_type_string(), "Output<network::SubnetType>");
+        assert_eq!(ty.to_type_string(), "Output<crate::network::SubnetType>");
     }
 
     #[test]

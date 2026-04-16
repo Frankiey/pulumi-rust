@@ -6,11 +6,11 @@
 
 /// Rust keywords that need escaping when used as identifiers.
 const RUST_KEYWORDS: &[&str] = &[
-    "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum",
-    "extern", "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move",
-    "mut", "pub", "ref", "return", "self", "Self", "static", "struct", "super", "trait", "true",
-    "type", "unsafe", "use", "where", "while", "yield", "abstract", "become", "box", "do",
-    "final", "macro", "override", "priv", "try", "typeof", "unsized", "virtual",
+    "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum", "extern",
+    "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub",
+    "ref", "return", "self", "Self", "static", "struct", "super", "trait", "true", "type",
+    "unsafe", "use", "where", "while", "yield", "abstract", "become", "box", "do", "final",
+    "macro", "override", "priv", "try", "typeof", "unsized", "virtual",
 ];
 
 /// Context for naming conversions within a specific package.
@@ -147,6 +147,20 @@ pub fn escape_keyword(s: &str) -> String {
     }
 }
 
+/// Escape a module name using raw identifier syntax (`r#type`).
+///
+/// Module names in `pub mod` declarations cannot use `type_` style escaping
+/// because the module name must match the directory/file name. Instead we use
+/// `r#keyword` which Rust accepts as an identifier while the file remains
+/// named `keyword.rs` / `keyword/`.
+pub fn escape_module_ident(s: &str) -> String {
+    if RUST_KEYWORDS.contains(&s) {
+        format!("r#{s}")
+    } else {
+        s.to_string()
+    }
+}
+
 /// Convert a camelCase property name to its Pulumi wire name.
 /// This is the identity function — Pulumi already uses camelCase on the wire.
 pub fn field_to_wire_name(rust_field: &str) -> String {
@@ -199,6 +213,14 @@ mod tests {
     }
 
     #[test]
+    fn test_escape_module_ident() {
+        assert_eq!(escape_module_ident("type"), "r#type");
+        assert_eq!(escape_module_ident("self"), "r#self");
+        assert_eq!(escape_module_ident("fn"), "r#fn");
+        assert_eq!(escape_module_ident("name"), "name");
+    }
+
+    #[test]
     fn test_naming_context_module_path() {
         let ctx = NamingContext::new("azure-native");
         assert_eq!(ctx.package_name, "azure_native");
@@ -240,7 +262,10 @@ mod tests {
     fn test_naming_context_property_to_field() {
         let ctx = NamingContext::new("mypkg");
 
-        assert_eq!(ctx.property_to_field_name("resourceGroupName"), "resource_group_name");
+        assert_eq!(
+            ctx.property_to_field_name("resourceGroupName"),
+            "resource_group_name"
+        );
         assert_eq!(ctx.property_to_field_name("type"), "type_");
         assert_eq!(ctx.property_to_field_name("location"), "location");
         assert_eq!(ctx.property_to_field_name("enableHTTPS"), "enable_https");

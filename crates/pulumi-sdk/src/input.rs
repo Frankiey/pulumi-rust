@@ -1,4 +1,5 @@
 use crate::output::Output;
+use serde::{Serialize, Serializer};
 
 /// An input that can be either a plain value or an [`Output`].
 ///
@@ -32,6 +33,17 @@ impl<T: Clone + Send + Sync + 'static> From<T> for Input<T> {
 impl<T: Clone + Send + Sync + 'static> From<Output<T>> for Input<T> {
     fn from(output: Output<T>) -> Self {
         Input::Output(output)
+    }
+}
+
+impl<T: Clone + Send + Sync + Serialize + 'static> Serialize for Input<T> {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match self {
+            Input::Value(v) => v.serialize(serializer),
+            Input::Output(_) => Err(serde::ser::Error::custom(
+                "cannot serialize an unresolved Output; resolve inputs before serializing",
+            )),
+        }
     }
 }
 

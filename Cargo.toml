@@ -8,8 +8,10 @@ members = [
     "crates/pulumi-random",
     "crates/pulumi-random-generated",
 "crates/pulumi-azure-native-generated",
+    "crates/pulumi-sdk-test",
     "crates/pulumi-language-rust",
     "examples/random-strings",
+    "examples/azure-resource-group",
 ]
 
 [workspace.package]

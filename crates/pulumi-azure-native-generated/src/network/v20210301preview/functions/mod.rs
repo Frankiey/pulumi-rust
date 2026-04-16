@@ -1,1 +1,0 @@
-pub mod get_network_security_perimeter;

@@ -1,0 +1,10 @@
+[package]
+name = "azure-resource-group"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+pulumi-sdk = { path = "../../crates/pulumi-sdk" }
+pulumi_azure_native = { path = "../../crates/pulumi-azure-native-generated", package = "pulumi-azure-native", features = ["resources"] }
+tokio = { workspace = true }
+serde_json = { workspace = true }

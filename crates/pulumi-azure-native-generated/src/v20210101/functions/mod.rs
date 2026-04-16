@@ -1,8 +1,0 @@
-pub mod get_deployment;
-pub mod get_deployment_at_management_group_scope;
-pub mod get_deployment_at_scope;
-pub mod get_deployment_at_subscription_scope;
-pub mod get_deployment_at_tenant_scope;
-pub mod get_resource;
-pub mod get_resource_group;
-pub mod get_tag_at_scope;

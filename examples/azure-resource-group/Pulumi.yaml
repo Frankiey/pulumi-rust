@@ -1,0 +1,6 @@
+name: azure-resource-group
+description: Create an Azure Resource Group with tags — Rust SDK example
+runtime:
+  name: rust
+  options:
+    binary: ../../target/debug/azure-resource-group

@@ -33,7 +33,11 @@ pub fn generate_provider(schema: &PulumiSchema, naming: &NamingContext) -> Gener
     if has_config_props {
         writeln!(code, "use pulumi_sdk::{{Context, Input, Output, ProviderResource, ResourceOptions, Result}};").ok();
     } else {
-        writeln!(code, "use pulumi_sdk::{{Context, Output, ProviderResource, ResourceOptions, Result}};").ok();
+        writeln!(
+            code,
+            "use pulumi_sdk::{{Context, Output, ProviderResource, ResourceOptions, Result}};"
+        )
+        .ok();
     }
     writeln!(code, "use std::collections::HashMap;").ok();
     writeln!(code).ok();
@@ -70,7 +74,11 @@ pub fn generate_provider(schema: &PulumiSchema, naming: &NamingContext) -> Gener
     writeln!(code, "        let opts = opts.unwrap_or_default();").ok();
     writeln!(code, "        let mut inputs = HashMap::new();").ok();
     writeln!(code, "        let mut deps: Vec<String> = Vec::new();").ok();
-    writeln!(code, "        let mut prop_deps: HashMap<String, Vec<String>> = HashMap::new();").ok();
+    writeln!(
+        code,
+        "        let mut prop_deps: HashMap<String, Vec<String>> = HashMap::new();"
+    )
+    .ok();
     writeln!(code).ok();
 
     // Resolve each config input property
@@ -154,7 +162,11 @@ pub fn generate_provider(schema: &PulumiSchema, naming: &NamingContext) -> Gener
     .ok();
     writeln!(code, "        ProviderResource::new(").ok();
     writeln!(code, "            self.urn.clone(),").ok();
-    writeln!(code, "            self.id.clone().apply(|v| v.as_str().unwrap_or_default().to_string()),").ok();
+    writeln!(
+        code,
+        "            self.id.clone().apply(|v| v.as_str().unwrap_or_default().to_string()),"
+    )
+    .ok();
     writeln!(code, "        )").ok();
     writeln!(code, "    }}").ok();
     writeln!(code, "}}").ok();
@@ -162,11 +174,7 @@ pub fn generate_provider(schema: &PulumiSchema, naming: &NamingContext) -> Gener
     GeneratedProvider { type_token, code }
 }
 
-fn generate_provider_args(
-    code: &mut String,
-    schema: &PulumiSchema,
-    naming: &NamingContext,
-) {
+fn generate_provider_args(code: &mut String, schema: &PulumiSchema, naming: &NamingContext) {
     writeln!(
         code,
         "/// Configuration arguments for the provider resource."
@@ -189,15 +197,24 @@ fn generate_provider_args(
             for (prop_name, prop_spec) in sorted {
                 let is_required = required_set.contains(&prop_name.as_str());
                 let field_name = naming.property_to_field_name(prop_name);
-                let rust_type =
-                    types::property_to_rust_type(prop_spec, TypePosition::Input, naming, is_required);
+                let rust_type = types::property_to_rust_type(
+                    prop_spec,
+                    TypePosition::Input,
+                    naming,
+                    is_required,
+                );
 
                 if let Some(ref desc) = prop_spec.description {
                     let first_line = desc.lines().next().unwrap_or("");
                     writeln!(code, "    /// {first_line}").ok();
                 }
 
-                writeln!(code, "    pub {field_name}: {},", rust_type.to_type_string()).ok();
+                writeln!(
+                    code,
+                    "    pub {field_name}: {},",
+                    rust_type.to_type_string()
+                )
+                .ok();
             }
         }
     }

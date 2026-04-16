@@ -13,12 +13,9 @@ fn load_schema(json: &str) -> PulumiSchema {
 }
 
 fn load_test_schema(name: &str) -> PulumiSchema {
-    let path = format!(
-        "{}/tests/testdata/{name}",
-        env!("CARGO_MANIFEST_DIR")
-    );
-    let json = std::fs::read_to_string(&path)
-        .unwrap_or_else(|e| panic!("failed to read {path}: {e}"));
+    let path = format!("{}/tests/testdata/{name}", env!("CARGO_MANIFEST_DIR"));
+    let json =
+        std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("failed to read {path}: {e}"));
     load_schema(&json)
 }
 
@@ -35,7 +32,10 @@ fn test_mini_random_generates_expected_files() {
 
     // Must have key files
     assert!(file_map.contains_key("src/lib.rs"), "missing lib.rs");
-    assert!(file_map.contains_key("src/provider.rs"), "missing provider.rs");
+    assert!(
+        file_map.contains_key("src/provider.rs"),
+        "missing provider.rs"
+    );
 
     // lib.rs should declare provider module
     let lib_rs = file_map["src/lib.rs"];

@@ -62,7 +62,15 @@ pub fn generate_function(
     writeln!(code).ok();
 
     // Generate the invoke function
-    generate_invoke_fn(&mut code, &fn_name, &args_name, &result_name, token, spec, naming);
+    generate_invoke_fn(
+        &mut code,
+        &fn_name,
+        &args_name,
+        &result_name,
+        token,
+        spec,
+        naming,
+    );
 
     GeneratedFunction {
         fn_name,
@@ -119,7 +127,12 @@ fn generate_args_struct(
                     writeln!(code, "    /// {first_line}").ok();
                 }
 
-                writeln!(code, "    pub {field_name}: {},", rust_type.to_type_string()).ok();
+                writeln!(
+                    code,
+                    "    pub {field_name}: {},",
+                    rust_type.to_type_string()
+                )
+                .ok();
             }
         }
     }
@@ -162,7 +175,12 @@ fn generate_result_struct(
                     writeln!(code, "    /// {first_line}").ok();
                 }
 
-                writeln!(code, "    pub {field_name}: {},", rust_type.to_type_string()).ok();
+                writeln!(
+                    code,
+                    "    pub {field_name}: {},",
+                    rust_type.to_type_string()
+                )
+                .ok();
             }
         }
     }
@@ -227,11 +245,7 @@ fn generate_invoke_fn(
     }
 
     writeln!(code).ok();
-    writeln!(
-        code,
-        "    let opts = opts.unwrap_or_default();"
-    )
-    .ok();
+    writeln!(code, "    let opts = opts.unwrap_or_default();").ok();
     writeln!(
         code,
         "    let result = ctx.invoke(\"{token}\", invoke_args, &opts).await?;"

@@ -153,7 +153,12 @@ fn generate_as_str(code: &mut String, type_name: &str, variants: &[EnumVariant])
     writeln!(code, "    pub fn as_str(&self) -> &'static str {{").ok();
     writeln!(code, "        match self {{").ok();
     for v in variants {
-        writeln!(code, "            Self::{} => \"{}\",", v.rust_name, v.wire_value).ok();
+        writeln!(
+            code,
+            "            Self::{} => \"{}\",",
+            v.rust_name, v.wire_value
+        )
+        .ok();
     }
     writeln!(code, "        }}").ok();
     writeln!(code, "    }}").ok();
@@ -166,7 +171,12 @@ fn generate_as_i64(code: &mut String, type_name: &str, variants: &[EnumVariant])
     writeln!(code, "    pub fn as_i64(&self) -> i64 {{").ok();
     writeln!(code, "        match self {{").ok();
     for v in variants {
-        writeln!(code, "            Self::{} => {},", v.rust_name, v.wire_value).ok();
+        writeln!(
+            code,
+            "            Self::{} => {},",
+            v.rust_name, v.wire_value
+        )
+        .ok();
     }
     writeln!(code, "        }}").ok();
     writeln!(code, "    }}").ok();
@@ -308,7 +318,9 @@ mod tests {
         assert!(gen.code.contains("\"Standard_LRS\""));
         assert!(gen.code.contains("impl serde::Serialize"));
         assert!(gen.code.contains("impl<'de> serde::Deserialize"));
-        assert!(gen.code.contains("impl From<SkuName> for serde_json::Value"));
+        assert!(gen
+            .code
+            .contains("impl From<SkuName> for serde_json::Value"));
     }
 
     #[test]

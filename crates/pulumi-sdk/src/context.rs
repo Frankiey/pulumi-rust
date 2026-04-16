@@ -94,29 +94,30 @@ impl Context {
 
         let prop_dep_map = property_deps
             .into_iter()
-            .map(|(k, urns)| {
-                (
-                    k,
-                    register_resource_request::PropertyDependencies { urns },
-                )
-            })
+            .map(|(k, urns)| (k, register_resource_request::PropertyDependencies { urns }))
             .collect();
 
         // Convert SDK CustomTimeouts to proto CustomTimeouts
-        let custom_timeouts = opts.custom_timeouts.as_ref().map(|ct| {
-            register_resource_request::CustomTimeouts {
-                create: ct.create.map(|d| format!("{}s", d.as_secs())).unwrap_or_default(),
-                update: ct.update.map(|d| format!("{}s", d.as_secs())).unwrap_or_default(),
-                delete: ct.delete.map(|d| format!("{}s", d.as_secs())).unwrap_or_default(),
-            }
-        });
+        let custom_timeouts =
+            opts.custom_timeouts
+                .as_ref()
+                .map(|ct| register_resource_request::CustomTimeouts {
+                    create: ct
+                        .create
+                        .map(|d| format!("{}s", d.as_secs()))
+                        .unwrap_or_default(),
+                    update: ct
+                        .update
+                        .map(|d| format!("{}s", d.as_secs()))
+                        .unwrap_or_default(),
+                    delete: ct
+                        .delete
+                        .map(|d| format!("{}s", d.as_secs()))
+                        .unwrap_or_default(),
+                });
 
         // Convert SDK Alias to proto Alias
-        let aliases: Vec<ProtoAlias> = opts
-            .aliases
-            .iter()
-            .map(|a| sdk_alias_to_proto(a))
-            .collect();
+        let aliases: Vec<ProtoAlias> = opts.aliases.iter().map(|a| sdk_alias_to_proto(a)).collect();
 
         let delete_before_replace = opts.delete_before_replace.unwrap_or(false);
         let delete_before_replace_defined = opts.delete_before_replace.is_some();
@@ -152,12 +153,7 @@ impl Context {
             ..Default::default()
         };
 
-        let resp = self
-            .engine
-            .lock()
-            .await
-            .register_resource(req)
-            .await?;
+        let resp = self.engine.lock().await.register_resource(req).await?;
 
         let mut outputs = HashMap::new();
         for (key, prop_val) in resp.properties {
@@ -235,13 +231,7 @@ impl Context {
 
         let fields = properties
             .into_iter()
-            .filter_map(|(k, pv)| {
-                if pv.known {
-                    Some((k, pv.value))
-                } else {
-                    None
-                }
-            })
+            .filter_map(|(k, pv)| if pv.known { Some((k, pv.value)) } else { None })
             .collect();
 
         Ok(InvokeResult { fields })
@@ -275,11 +265,7 @@ impl Context {
     }
 
     async fn log(&self, severity: i32, message: &str) -> Result<()> {
-        self.engine
-            .lock()
-            .await
-            .log(severity, message, "")
-            .await
+        self.engine.lock().await.log(severity, message, "").await
     }
 
     /// Register a component resource (logical grouping, no provider CRUD).
@@ -323,11 +309,7 @@ impl Context {
     }
 
     /// Register outputs for a completed component resource.
-    pub async fn register_component_outputs(
-        &self,
-        urn: &str,
-        outputs: Struct,
-    ) -> Result<()> {
+    pub async fn register_component_outputs(&self, urn: &str, outputs: Struct) -> Result<()> {
         self.engine
             .lock()
             .await

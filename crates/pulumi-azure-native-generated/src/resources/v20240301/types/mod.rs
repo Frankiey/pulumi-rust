@@ -1,9 +1,0 @@
-pub mod deny_settings_mode;
-pub mod deployment_mode;
-pub mod expression_evaluation_options_scope_type;
-pub mod extended_location_type;
-pub mod on_error_deployment_type;
-pub mod resource_identity_type;
-pub mod unmanage_action_management_group_mode;
-pub mod unmanage_action_resource_group_mode;
-pub mod unmanage_action_resource_mode;

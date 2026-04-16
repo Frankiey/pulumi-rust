@@ -7,9 +7,10 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write;
 
+use crate::complex_types;
 use crate::enums;
 use crate::functions;
-use crate::naming::{self, NamingContext};
+use crate::naming::{self, escape_module_ident, NamingContext};
 use crate::provider;
 use crate::resources;
 use crate::schema::PulumiSchema;
@@ -83,8 +84,10 @@ pub fn generate_module_tree(schema: &PulumiSchema) -> ModuleTree {
         if let Some(gen) = enums::generate_enum(token, spec, &naming) {
             let node = ensure_module(&mut root, &module_path);
             node.types.insert(file_name, gen.code);
+        } else if let Some(gen) = complex_types::generate_complex_type(token, spec, &naming) {
+            let node = ensure_module(&mut root, &module_path);
+            node.types.insert(file_name, gen.code);
         }
-        // TODO: Object type structs could also go here
     }
 
     // Generate files
@@ -117,10 +120,7 @@ pub fn generate_module_tree(schema: &PulumiSchema) -> ModuleTree {
 fn ensure_module<'a>(root: &'a mut ModuleNode, path: &[String]) -> &'a mut ModuleNode {
     let mut current = root;
     for segment in path {
-        current = current
-            .children
-            .entry(segment.clone())
-            .or_default();
+        current = current.children.entry(segment.clone()).or_default();
     }
     current
 }
@@ -145,7 +145,8 @@ fn emit_module_files(node: &ModuleNode, prefix: &[String], files: &mut Vec<Gener
     if !node.functions.is_empty() {
         let mut fn_mod = String::new();
         for name in node.functions.keys() {
-            writeln!(fn_mod, "pub mod {name};").ok();
+            let ident = escape_module_ident(name);
+            writeln!(fn_mod, "pub mod {ident};").ok();
         }
         files.push(GeneratedFile {
             path: format!("{dir}/functions/mod.rs"),
@@ -164,7 +165,8 @@ fn emit_module_files(node: &ModuleNode, prefix: &[String], files: &mut Vec<Gener
     if !node.types.is_empty() {
         let mut type_mod = String::new();
         for name in node.types.keys() {
-            writeln!(type_mod, "pub mod {name};").ok();
+            let ident = escape_module_ident(name);
+            writeln!(type_mod, "pub mod {ident};").ok();
         }
         files.push(GeneratedFile {
             path: format!("{dir}/types/mod.rs"),
@@ -202,12 +204,14 @@ fn generate_mod_rs(node: &ModuleNode) -> String {
 
     // Declare child modules
     for child in node.children.keys() {
-        writeln!(code, "pub mod {child};").ok();
+        let ident = escape_module_ident(child);
+        writeln!(code, "pub mod {ident};").ok();
     }
 
     // Declare resource modules
     for name in node.resources.keys() {
-        writeln!(code, "pub mod {name};").ok();
+        let ident = escape_module_ident(name);
+        writeln!(code, "pub mod {ident};").ok();
     }
 
     // Declare functions subdirectory
@@ -215,9 +219,13 @@ fn generate_mod_rs(node: &ModuleNode) -> String {
         writeln!(code, "pub mod functions;").ok();
     }
 
-    // Declare types subdirectory
+    // Declare types subdirectory and re-export all types
     if !node.types.is_empty() {
         writeln!(code, "pub mod types;").ok();
+        for name in node.types.keys() {
+            let ident = escape_module_ident(name);
+            writeln!(code, "pub use types::{ident}::*;").ok();
+        }
     }
 
     code
@@ -230,14 +238,21 @@ fn generate_lib_rs(root: &ModuleNode) -> String {
     writeln!(code).ok();
     writeln!(code, "pub mod provider;").ok();
 
-    // Top-level child modules
+    let has_features = root.children.len() > 1;
+
+    // Top-level child modules (gated by features if many modules)
     for child in root.children.keys() {
-        writeln!(code, "pub mod {child};").ok();
+        let ident = escape_module_ident(child);
+        if has_features {
+            writeln!(code, "#[cfg(feature = \"{child}\")]").ok();
+        }
+        writeln!(code, "pub mod {ident};").ok();
     }
 
     // Top-level resource files
     for name in root.resources.keys() {
-        writeln!(code, "pub mod {name};").ok();
+        let ident = escape_module_ident(name);
+        writeln!(code, "pub mod {ident};").ok();
     }
 
     // Top-level functions
@@ -248,6 +263,10 @@ fn generate_lib_rs(root: &ModuleNode) -> String {
     // Top-level types
     if !root.types.is_empty() {
         writeln!(code, "pub mod types;").ok();
+        for name in root.types.keys() {
+            let ident = escape_module_ident(name);
+            writeln!(code, "pub use types::{ident}::*;").ok();
+        }
     }
 
     writeln!(code).ok();
@@ -275,7 +294,11 @@ fn generate_cargo_toml(schema: &PulumiSchema, root: &ModuleNode) -> String {
     writeln!(toml).ok();
     writeln!(toml, "[dependencies]").ok();
     writeln!(toml, "pulumi-sdk = {{ path = \"../pulumi-sdk\" }}").ok();
-    writeln!(toml, "serde = {{ version = \"1\", features = [\"derive\"] }}").ok();
+    writeln!(
+        toml,
+        "serde = {{ version = \"1\", features = [\"derive\"] }}"
+    )
+    .ok();
     writeln!(toml, "serde_json = \"1\"").ok();
 
     // Feature flags for top-level modules (useful for large providers)
@@ -283,8 +306,12 @@ fn generate_cargo_toml(schema: &PulumiSchema, root: &ModuleNode) -> String {
     if top_level_modules.len() > 1 {
         writeln!(toml).ok();
         writeln!(toml, "[features]").ok();
-        let all: Vec<_> = top_level_modules.iter().map(|m| format!("\"{m}\"")).collect();
-        writeln!(toml, "default = [{}]", all.join(", ")).ok();
+        let all: Vec<_> = top_level_modules
+            .iter()
+            .map(|m| format!("\"{m}\""))
+            .collect();
+        writeln!(toml, "default = []").ok();
+        writeln!(toml, "full = [{}]", all.join(", ")).ok();
         for module in &top_level_modules {
             writeln!(toml, "{module} = []").ok();
         }
@@ -334,7 +361,8 @@ mod tests {
                 aliases: None,
                 deprecation_message: None,
                 is_component: None,
-                state_inputs: None, methods: None,
+                state_inputs: None,
+                methods: None,
             },
         );
 
@@ -418,7 +446,8 @@ mod tests {
                 aliases: None,
                 deprecation_message: None,
                 is_component: None,
-                state_inputs: None, methods: None,
+                state_inputs: None,
+                methods: None,
             },
         );
 
@@ -433,7 +462,8 @@ mod tests {
                 aliases: None,
                 deprecation_message: None,
                 is_component: None,
-                state_inputs: None, methods: None,
+                state_inputs: None,
+                methods: None,
             },
         );
 
@@ -464,5 +494,16 @@ mod tests {
         assert!(tree.cargo_toml.contains("[features]"));
         assert!(tree.cargo_toml.contains("network"));
         assert!(tree.cargo_toml.contains("resources"));
+        assert!(tree.cargo_toml.contains("default = []"));
+        assert!(tree.cargo_toml.contains("full = ["));
+
+        // lib.rs should gate modules behind features
+        let lib_rs = tree
+            .files
+            .iter()
+            .find(|f| f.path == "src/lib.rs")
+            .expect("lib.rs not found");
+        assert!(lib_rs.content.contains("#[cfg(feature = \"network\")]"));
+        assert!(lib_rs.content.contains("#[cfg(feature = \"resources\")]"));
     }
 }

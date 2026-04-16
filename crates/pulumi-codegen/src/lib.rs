@@ -4,6 +4,7 @@
 //! idiomatic Rust crates with typed resources, functions, enums,
 //! and module trees.
 
+pub mod complex_types;
 pub mod enums;
 pub mod format;
 pub mod functions;

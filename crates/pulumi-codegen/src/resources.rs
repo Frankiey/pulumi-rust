@@ -36,7 +36,11 @@ pub fn generate_resource(
     let mut code = String::new();
 
     // Imports
-    writeln!(code, "use pulumi_sdk::{{Context, Input, Output, ResourceOptions, Result}};").ok();
+    writeln!(
+        code,
+        "use pulumi_sdk::{{Context, Input, Output, ResourceOptions, Result}};"
+    )
+    .ok();
     writeln!(code, "use std::collections::HashMap;").ok();
     writeln!(code).ok();
 
@@ -77,10 +81,7 @@ fn generate_args_struct(
     }
 
     // Only derive Default if there are no required input properties
-    let has_required = spec
-        .required_inputs
-        .as_ref()
-        .is_some_and(|v| !v.is_empty());
+    let has_required = spec.required_inputs.as_ref().is_some_and(|v| !v.is_empty());
     if !has_required {
         writeln!(code, "#[derive(Default)]").ok();
     }
@@ -100,7 +101,8 @@ fn generate_args_struct(
         for (prop_name, prop_spec) in props {
             let is_required = required_set.contains(&prop_name.as_str());
             let field_name = naming.property_to_field_name(prop_name);
-            let rust_type = types::property_to_rust_type(prop_spec, TypePosition::Input, naming, is_required);
+            let rust_type =
+                types::property_to_rust_type(prop_spec, TypePosition::Input, naming, is_required);
 
             // Doc comment for field
             if let Some(ref desc) = prop_spec.description {
@@ -108,7 +110,12 @@ fn generate_args_struct(
                 writeln!(code, "    /// {first_line}").ok();
             }
 
-            writeln!(code, "    pub {field_name}: {},", rust_type.to_type_string()).ok();
+            writeln!(
+                code,
+                "    pub {field_name}: {},",
+                rust_type.to_type_string()
+            )
+            .ok();
         }
     }
 
@@ -178,7 +185,11 @@ fn generate_impl(
     writeln!(code, "        let opts = opts.unwrap_or_default();").ok();
     writeln!(code, "        let mut inputs = HashMap::new();").ok();
     writeln!(code, "        let mut deps: Vec<String> = Vec::new();").ok();
-    writeln!(code, "        let mut prop_deps: HashMap<String, Vec<String>> = HashMap::new();").ok();
+    writeln!(
+        code,
+        "        let mut prop_deps: HashMap<String, Vec<String>> = HashMap::new();"
+    )
+    .ok();
     writeln!(code).ok();
 
     // Generate resolve_input calls for each input property

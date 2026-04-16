@@ -94,7 +94,7 @@ pub struct ResourceSpec {
 }
 
 /// Specification of a single property.
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Default, Deserialize)]
 pub struct PropertySpec {
     /// Description of the property.
     pub description: Option<String>,
@@ -291,14 +291,8 @@ mod tests {
 
         let inputs = res.input_properties.as_ref().unwrap();
         assert_eq!(inputs.len(), 2);
-        assert_eq!(
-            inputs["name"].property_type.as_deref(),
-            Some("string")
-        );
-        assert_eq!(
-            inputs["count"].property_type.as_deref(),
-            Some("integer")
-        );
+        assert_eq!(inputs["name"].property_type.as_deref(), Some("string"));
+        assert_eq!(inputs["count"].property_type.as_deref(), Some("integer"));
 
         let required = res.required_inputs.as_ref().unwrap();
         assert_eq!(required, &["name"]);
@@ -414,10 +408,7 @@ mod tests {
         assert_eq!(variants.len(), 3);
         assert_eq!(variants[0].name.as_deref(), Some("Red"));
         assert_eq!(variants[0].value, serde_json::json!("red"));
-        assert_eq!(
-            variants[0].description.as_deref(),
-            Some("The color red")
-        );
+        assert_eq!(variants[0].description.as_deref(), Some("The color red"));
     }
 
     #[test]
@@ -587,10 +578,7 @@ mod tests {
         let rs = &schema.resources["random:index/randomString:RandomString"];
         let inputs = rs.input_properties.as_ref().unwrap();
         assert_eq!(inputs.len(), 7);
-        assert_eq!(
-            inputs["length"].property_type.as_deref(),
-            Some("integer")
-        );
+        assert_eq!(inputs["length"].property_type.as_deref(), Some("integer"));
         assert_eq!(inputs["special"].default, Some(serde_json::json!(true)));
 
         let required_inputs = rs.required_inputs.as_ref().unwrap();

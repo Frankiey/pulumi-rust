@@ -115,10 +115,7 @@ fn run_generate(
         file_count += 1;
     }
 
-    eprintln!(
-        "  wrote {file_count} source files to {}",
-        out_dir.display()
-    );
+    eprintln!("  wrote {file_count} source files to {}", out_dir.display());
     eprintln!("Done!");
 
     Ok(())

@@ -89,10 +89,7 @@ pub async fn resolve_input_map<V>(
         }
     }
 
-    inputs.insert(
-        field_name.to_string(),
-        serde_json::Value::Object(json_map),
-    );
+    inputs.insert(field_name.to_string(), serde_json::Value::Object(json_map));
 }
 
 /// Resolve a vector of `Input<T>` values for resource registration.
@@ -150,7 +147,14 @@ mod tests {
         let mut deps = Vec::new();
         let mut prop_deps = HashMap::new();
 
-        resolve_input("count", Input::Value(42i64), &mut inputs, &mut deps, &mut prop_deps).await;
+        resolve_input(
+            "count",
+            Input::Value(42i64),
+            &mut inputs,
+            &mut deps,
+            &mut prop_deps,
+        )
+        .await;
 
         assert_eq!(inputs.get("count"), Some(&serde_json::json!(42)));
         assert!(deps.is_empty());
@@ -228,9 +232,6 @@ mod tests {
 
         resolve_input_vec("numbers", vec, &mut inputs, &mut deps, &mut prop_deps).await;
 
-        assert_eq!(
-            inputs.get("numbers"),
-            Some(&serde_json::json!([1, 2, 3]))
-        );
+        assert_eq!(inputs.get("numbers"), Some(&serde_json::json!([1, 2, 3])));
     }
 }

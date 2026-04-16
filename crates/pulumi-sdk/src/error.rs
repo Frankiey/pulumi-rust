@@ -19,10 +19,7 @@ pub enum PulumiError {
 
     /// A required configuration key was not set.
     #[error("missing required configuration: {namespace}:{key}")]
-    MissingConfig {
-        namespace: String,
-        key: String,
-    },
+    MissingConfig { namespace: String, key: String },
 
     /// A resource registration RPC failed.
     #[error("resource registration failed: {0}")]
@@ -30,10 +27,7 @@ pub enum PulumiError {
 
     /// A provider invoke RPC failed.
     #[error("invoke failed for {token}: {message}")]
-    InvokeFailed {
-        token: String,
-        message: String,
-    },
+    InvokeFailed { token: String, message: String },
 
     /// An environment variable required by the SDK was missing.
     #[error("missing environment variable: {0}")]

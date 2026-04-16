@@ -34,3 +34,7 @@ Pulumi.*.yaml
 .dolt/
 *.db
 .beads-credential-key
+
+# Generated provider SDKs (regenerate from schema — do not commit)
+crates/pulumi-azure-native-generated/src/
+crates/pulumi-random-generated/src/

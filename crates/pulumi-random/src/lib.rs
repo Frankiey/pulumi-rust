@@ -67,7 +67,13 @@ impl RandomString {
         }
 
         let registered = ctx
-            .register_resource(RANDOM_STRING_TYPE, name, inputs, prop_deps, &ResourceOptions::default())
+            .register_resource(
+                RANDOM_STRING_TYPE,
+                name,
+                inputs,
+                prop_deps,
+                &ResourceOptions::default(),
+            )
             .await?;
 
         let result = registered
