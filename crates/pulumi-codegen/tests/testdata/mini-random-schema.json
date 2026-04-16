@@ -1,0 +1,55 @@
+{
+  "name": "mini-random",
+  "version": "1.0.0",
+  "description": "A minimal random provider for testing.",
+  "resources": {
+    "mini-random:index:RandomString": {
+      "description": "Generates a random string.",
+      "inputProperties": {
+        "length": {
+          "type": "integer",
+          "description": "The length of the string."
+        },
+        "special": {
+          "type": "boolean",
+          "description": "Include special characters."
+        }
+      },
+      "requiredInputs": ["length"],
+      "properties": {
+        "result": {
+          "type": "string",
+          "description": "The generated string."
+        },
+        "length": {
+          "type": "integer"
+        }
+      },
+      "required": ["result", "length"]
+    }
+  },
+  "functions": {
+    "mini-random:index:getRandomBytes": {
+      "description": "Get random bytes.",
+      "inputs": {
+        "properties": {
+          "length": {
+            "type": "integer",
+            "description": "Number of bytes."
+          }
+        },
+        "required": ["length"]
+      },
+      "outputs": {
+        "properties": {
+          "bytes": {
+            "type": "string",
+            "description": "Base64-encoded bytes."
+          }
+        },
+        "required": ["bytes"]
+      }
+    }
+  },
+  "types": {}
+}
