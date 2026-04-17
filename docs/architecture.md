@@ -1,4 +1,11 @@
-# Architecture — Pulumi Rust SDK (Iteration 1)
+# Architecture — Pulumi Rust SDK (v1 — Original Design)
+
+> **Note:** This document describes the original MVP architecture. For the full architecture
+> covering code generation, provider SDK packaging, and testing infrastructure, see
+> [architecture-v2.md](./architecture-v2.md).
+>
+> This document remains valuable for its detailed RPC sequence diagrams, wire format
+> documentation, and design decision rationale — all of which are still accurate.
 
 ## Two-Process Model
 

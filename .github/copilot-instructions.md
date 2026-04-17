@@ -5,14 +5,14 @@ This repo is a Rust SDK for Pulumi.
 ## Context
 
 - Primary language: **Rust** (idiomatic, safe, no unwrap in lib code)
-- Secondary language: **TypeScript** (bindings/tooling only)
 - Target: wrapping Pulumi's automation API and resource model
+- Build system: Cargo workspace + Makefile (`make help` for targets)
 
 ## Code style
 
 - Rust: follow `rustfmt` defaults, clippy clean, use `thiserror` for error types
-- TypeScript: ESM, strict mode, no `any`
 - Prefer explicit error handling over panics
+- `BTreeMap` for protobuf `Struct` fields (ordering matters)
 
 ## What to suggest
 

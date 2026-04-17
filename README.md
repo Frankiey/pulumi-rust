@@ -185,6 +185,22 @@ async fn test_my_stack() {
 
 ## Development
 
+Common tasks are available via `make`:
+
+```bash
+make help            # Show all available targets
+make check           # Run fmt + lint + test (CI equivalent)
+make fmt             # Format all code
+make lint            # Clippy with deny-warnings
+make test            # Run workspace tests
+make build           # Debug build
+make build-release   # Release build
+make install-check   # Verify protoc, pulumi, cargo are installed
+make doc             # Build and open rustdoc
+```
+
+Or run cargo directly:
+
 ```bash
 # Format
 cargo fmt --all
@@ -208,6 +224,13 @@ cargo run -p pulumi-codegen-cli -- generate --schema /tmp/azure-native-schema.js
 - Language host binds a random port and prints it to stdout for CLI discovery
 - Generated providers use `default = []` features — consumers opt in to modules they need
 
+## Documentation
+
+- [Getting Started](docs/getting-started.md) — first project walkthrough
+- [Architecture (v1)](docs/architecture.md) — original design: protocol, key types, RPC sequence
+- [Architecture (v2)](docs/architecture-v2.md) — full provider support design document
+- [Packaging Strategy](docs/packaging-strategy.md) — crates.io publishing plan
+
 ## License
 
-MIT
+Apache-2.0

@@ -1,24 +1,25 @@
 # pulumi-rust
 
-Rust SDK for Pulumi. Wraps Pulumi's automation API and resource model in idiomatic Rust, with optional TypeScript bindings.
+Rust SDK for Pulumi. Wraps Pulumi's automation API and resource model in idiomatic Rust with schema-driven code generation and a fully functional gRPC protocol layer.
 
 ## Project goals
 
 - Idiomatic Rust SDK surface for Pulumi automation API
 - Type-safe resource definitions generated from Pulumi schemas
-- Optional TypeScript interop layer
+- Language host binary for `pulumi new rust` / `pulumi up`
 
 ## Stack
 
-- **Rust** — primary SDK implementation
-- **TypeScript** — bindings / tooling (secondary)
+- **Rust** — primary SDK implementation (all crates)
 - **Pulumi** — underlying infrastructure engine
+- **gRPC / tonic** — protocol layer
+- **protobuf** — wire format (vendored proto files)
 
 ## Conventions
 
-- `cargo fmt` + `cargo clippy` before committing
-- No `unwrap()` in library code — use `?` and proper error types
-- Keep TypeScript glue minimal; prefer Rust-native solutions
+- `cargo fmt` + `cargo clippy` before committing (or `make check`)
+- No `unwrap()` in library code — use `?` and proper error types (`thiserror`)
+- `BTreeMap` for `prost_types::Struct` fields (protobuf ordering)
 
 ## Issue Tracking
 
@@ -46,12 +47,22 @@ git add <changed files>
 git status  # all relevant changes must be staged
 ```
 
-## Structure (planned)
+## Structure
 
 ```
-crates/          # Rust crates
-  sdk/           # Core SDK
-  macros/        # Proc macros for resource codegen
-bindings/        # TypeScript bindings
-docs/            # Design docs & research notes
+crates/
+  pulumi-sdk/                     # Core SDK: Output<T>, Context, run()
+  pulumi-proto/                   # gRPC stubs (compiled from proto/)
+  pulumi-codegen/                 # Schema → Rust code generator
+  pulumi-codegen-cli/             # CLI for code generation
+  pulumi-language-rust/           # Pulumi language host binary
+  pulumi-sdk-test/                # Mock + integration test framework
+  pulumi-random/                  # Hand-written random provider (reference)
+  pulumi-random-generated/        # Auto-generated random provider
+  pulumi-azure-native-generated/  # Auto-generated azure-native provider
+examples/
+  random-strings/                 # Two RandomStrings with Output dependency
+  azure-resource-group/           # Azure resource group with tags
+proto/pulumi/                     # Vendored Pulumi proto files
+docs/                             # Architecture, getting started, packaging strategy
 ```

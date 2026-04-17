@@ -23,6 +23,12 @@ This guide walks you through creating your first Pulumi program in Rust.
    pulumi login           # Pulumi Cloud
    ```
 
+You can verify all prerequisites at once:
+
+```bash
+make install-check
+```
+
 ## Option A: Using `pulumi new`
 
 The language host provides a template:
@@ -292,6 +298,8 @@ async fn test_real_deployment() {
 ## Next steps
 
 - Browse the [architecture docs](./architecture.md) for SDK internals
+- Read the [packaging strategy](./packaging-strategy.md) for the crates.io publishing plan
 - Check the [examples/](../examples/) directory for working programs
 - Look at `pulumi-random` for a complete hand-written provider example
 - Look at `pulumi-random-generated` for what code generation produces
+- Run `make help` to see all available development commands
